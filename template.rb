@@ -1,7 +1,5 @@
-def source_paths
-  Array(super) + 
-    [File.join(File.expand_path(File.dirname(__FILE__)), '.')]
-end
+source_root File.dirname(__FILE__)
+
 
 # include gems
 gem "haml"
