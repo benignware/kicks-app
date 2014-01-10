@@ -1,5 +1,4 @@
-source_root File.dirname(__FILE__)
-
+add_source File.dirname(__FILE__)
 
 # include gems
 gem "haml"
