@@ -34,7 +34,7 @@ CODE
 append_to_file 'app/assets/javascripts/application.js', "//= require bootstrap\n"
 
 # simple_form bootstrap3 initializer
-initializer 'simple_form_bootstrap3.rb', <<-CODE
+initializer 'simple_form_bootstrap3.rb', <<-'CODE'
 inputs = %w[
   CollectionSelectInput
   DateTimeInput
