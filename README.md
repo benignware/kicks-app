@@ -14,7 +14,7 @@ Usage
 
 Create a new app from the command line
 ```
-rails new app -m 'https://raw.github.com/rexblack/kicks-app/master/template.rb'
+rails new Project -m 'https://raw.github.com/rexblack/kicks-app/master/template.rb'
 ```
 
 Move to the new application directory and start server
