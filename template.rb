@@ -1,4 +1,7 @@
-add_source File.dirname(__FILE__)
+def source_paths
+  Array(super) + 
+    [File.join(File.expand_path(File.dirname(__FILE__)), 'templates')]
+end
 
 # include gems
 gem "haml"
