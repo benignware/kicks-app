@@ -83,6 +83,20 @@ run "rm app/views/layouts/application.html.erb"
 
 # layout templates
 
+
+# install devise
+generate "devise:install"
+generate "model user --skip"
+generate "devise user --skip"
+generate "devise:views"
+# convert devise views to haml
+run "for file in app/views/devise/**/*.erb; do html2haml -e $file ${file%erb}haml && rm $file; done"
+
+
+# views
+
+
+
 # header
 create_file "app/views/layouts/_header.html.haml", <<-CODE
 .navbar.navbar-inverse.navbar-fixed-top
@@ -106,7 +120,6 @@ create_file "app/views/layouts/_header.html.haml", <<-CODE
         = simple_form_for(User.new, as: :user, url: session_path(:user), html: {class: 'navbar-form navbar-right'}) do |f|
           = f.input :email, required: false, autofocus: true, placeholder: "Email", label: false, input_html: {size: 0}
           = f.input :password, required: false, placeholder: "Password", label: false, input_html: {size: 0}
-          -# = f.input :remember_me, as: :boolean if devise_mapping.rememberable?
           = f.button :submit, "Sign in", class: 'btn-success'
       - else  
         %ul.nav.navbar-nav.navbar-right
@@ -121,20 +134,6 @@ create_file "app/views/layouts/_header.html.haml", <<-CODE
                 = link_to "Sign out", destroy_user_session_path, :method => :delete
                 
 CODE
-
-
-
-
-# install devise
-generate "devise:install"
-generate "model user --skip"
-generate "devise user --skip"
-generate "devise:views"
-# convert devise views to haml
-run "for file in app/views/devise/**/*.erb; do html2haml -e $file ${file%erb}haml && rm $file; done"
-
-
-# views
 
 # footer partial
 create_file "app/views/layouts/_footer.html.haml", <<-CODE
