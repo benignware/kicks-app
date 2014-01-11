@@ -98,7 +98,7 @@ run "for file in app/views/devise/**/*.erb; do html2haml -e $file ${file%erb}ham
 
 
 # header
-create_file "app/views/layouts/_header.html.haml", <<-CODE
+create_file "app/views/layouts/_header.html.haml", <<-'CODE'
 .navbar.navbar-inverse.navbar-fixed-top
   .container
     .navbar-header
@@ -136,7 +136,7 @@ create_file "app/views/layouts/_header.html.haml", <<-CODE
 CODE
 
 # footer partial
-create_file "app/views/layouts/_footer.html.haml", <<-CODE
+create_file "app/views/layouts/_footer.html.haml", <<-'CODE'
 %footer
   .container
     %p
@@ -144,7 +144,7 @@ create_file "app/views/layouts/_footer.html.haml", <<-CODE
 CODE
 
 # application layout
-create_file "app/views/layouts/application.html.haml", <<-CODE
+create_file "app/views/layouts/application.html.haml", <<-'CODE'
 !!!
 %html
   %head
@@ -177,7 +177,7 @@ create_file "app/views/layouts/application.html.haml", <<-CODE
 CODE
 
 
-create_file "app/views/layouts/_footer.html.haml", <<-CODE
+create_file "app/views/layouts/_footer.html.haml", <<-'CODE'
 !!!
 %html
   %head
@@ -207,7 +207,7 @@ route "root 'index#index'"
 
 
 # index controller
-create_file "app/controllers/index_controller.rb", <<-CODE
+create_file "app/controllers/index_controller.rb", <<-'CODE'
 class IndexController < ApplicationController
   def index
     render view: 'index', layout: 'full'
@@ -216,7 +216,7 @@ end
 CODE
 
 
-create_file "app/views/index.html.haml", <<-CODE
+create_file "app/views/index.html.haml", <<-'CODE'
 = render partial: 'layouts/header'
 
 .jumbotron
