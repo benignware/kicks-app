@@ -1,10 +1,3 @@
-def source_paths
-  Array(super) + 
-    [File.dirname(__FILE__) << '/templates']
-end
-
-add_source "https://github.com/rexblack/kicks-app/raw/master/"
-
 # include gems
 gem "haml"
 gem "haml-rails"
@@ -84,12 +77,53 @@ end
 
 CODE
 
-# copy layout templates
+# remove application layout
 run "rm app/views/layouts/application.html.erb"
-template "app/views/layouts/_header.html.haml"
-template "app/views/layouts/_footer.html.haml"
-template "app/views/layouts/application.html.haml"
-template "app/views/layouts/full.html.haml"
+
+
+# layout templates
+
+# header
+create_file "app/views/layouts/_header.html.haml", <<-CODE
+.navbar.navbar-inverse.navbar-fixed-top
+  .container
+    .navbar-header
+      %button.navbar-toggle{:type => "button", :data => {:toggle => "collapse", :target => ".navbar-collapse"} }
+        %span.icon-bar
+        %span.icon-bar
+        %span.icon-bar
+      = link_to "Play", root_path, :class => "navbar-brand"
+    .collapse.navbar-collapse
+      %ul.nav.navbar-nav
+        %li
+          %a{:href => "#"} Link #1
+        %li
+          %a{:href => "#"} Link #2
+        %li
+          %a{:href => "#"} Link #3
+       
+      - if !current_user   
+        = simple_form_for(User.new, as: :user, url: session_path(:user), html: {class: 'navbar-form navbar-right'}) do |f|
+          = f.input :email, required: false, autofocus: true, placeholder: "Email", label: false, input_html: {size: 0}
+          = f.input :password, required: false, placeholder: "Password", label: false, input_html: {size: 0}
+          -# = f.input :remember_me, as: :boolean if devise_mapping.rememberable?
+          = f.button :submit, "Sign in", class: 'btn-success'
+      - else  
+        %ul.nav.navbar-nav.navbar-right
+          %li.dropdown
+            %a.dropdown-toggle{data: {toggle: 'dropdown'}}
+              Account
+              %b.caret
+            %ul.dropdown-menu
+              %li
+                %a{:href => edit_user_registration_path} Profile
+              %li
+                = link_to "Sign out", destroy_user_session_path, :method => :delete
+                
+CODE
+
+
+
 
 # install devise
 generate "devise:install"
@@ -99,11 +133,81 @@ generate "devise:views"
 # convert devise views to haml
 run "for file in app/views/devise/**/*.erb; do html2haml -e $file ${file%erb}haml && rm $file; done"
 
+
+# views
+
+# footer partial
+create_file "app/views/layouts/_footer.html.haml", <<-CODE
+%footer
+  .container
+    %p
+      &copy; Company 2013
+CODE
+
+# application layout
+create_file "app/views/layouts/application.html.haml", <<-CODE
+!!!
+%html
+  %head
+    %meta{:charset => "utf-8"}
+    %title Starter Template for Bootstrap
+    %meta{:content => "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no", :name => "viewport"}
+    %meta{:content => "", :name => "description"}
+    %meta{:content => "", :name => "author"}
+
+    / Le HTML5 shim, for IE6-8 support of HTML5 elements
+    /[if lt IE 9]
+      = javascript_include_tag "https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js", "https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"
+
+    = stylesheet_link_tag    "application", :media => "all", "data-turbolinks-track" => true
+    = javascript_include_tag "application", "data-turbolinks-track" => true
+    = csrf_meta_tags
+  %body
+    
+    = render partial: 'layouts/header'
+           
+    .container
+      - flash.each do |name, msg|
+        = content_tag :div, :class => "alert alert-#{name == :error ? "danger" : "success" } alert-dismissable" do
+          %button.close{:type => "button", :data => {:dismiss => "alert"}, :aria => {:hidden => "true"} } &times;
+          = msg
+      = yield
+      
+    
+    = render partial: 'layouts/footer'
+CODE
+
+
+create_file "app/views/layouts/_footer.html.haml", <<-CODE
+!!!
+%html
+  %head
+    %meta{:charset => "utf-8"}
+    %title Starter Template for Bootstrap
+    %meta{:content => "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no", :name => "viewport"}
+    %meta{:content => "", :name => "description"}
+    %meta{:content => "", :name => "author"}
+
+    / Le HTML5 shim, for IE6-8 support of HTML5 elements
+    /[if lt IE 9]
+      = javascript_include_tag "https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js", "https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"
+
+    = stylesheet_link_tag    "application", :media => "all", "data-turbolinks-track" => true
+    = javascript_include_tag "application", "data-turbolinks-track" => true
+    = csrf_meta_tags
+  %body
+    
+    = yield
+CODE
+
+
+
 # generate home page
 
 route "root 'index#index'"  
 
-#generate "controller index index --skip-template-engine"
+
+# index controller
 create_file "app/controllers/index_controller.rb", <<-CODE
 class IndexController < ApplicationController
   def index
@@ -111,7 +215,42 @@ class IndexController < ApplicationController
   end
 end
 CODE
-template "app/views/index/index.html.haml"
+
+
+create_file "app/views/index.html.haml", <<-CODE
+= render partial: 'layouts/header'
+
+.jumbotron
+  .container
+    %h1= 'Hello world!'
+    %p This is a skeleton application with integrated authentication using devise and bootstrap views
+    %p
+      = link_to t('Sign up') + " &raquo;".html_safe , new_user_registration_path, class: 'btn btn-primary btn-lg'
+
+.container
+  .row
+    .col-md-4
+      %h2='Heading'
+      %p
+        Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui.
+      %a.btn.btn-default{href: '#'}
+        View details &raquo;
+    .col-md-4
+      %h2='Heading'
+      %p
+        Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui.
+      %a.btn.btn-default{href: '#'}
+        View details &raquo;
+    .col-md-4
+      %h2='Heading'
+      %p
+        Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui.
+      %a.btn.btn-default{href: '#'}
+        View details &raquo;
+    %hr
+
+= render partial: 'layouts/footer'
+CODE
 
 # migrate
 rake "db:migrate"
