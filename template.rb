@@ -28,6 +28,9 @@ CODE
 
 append_to_file 'app/assets/javascripts/application.js', "//= require bootstrap\n"
 
+# simple form
+generate "simple_form:install"
+
 # simple_form bootstrap3 initializer
 initializer 'simple_form_bootstrap3.rb', <<-'CODE'
 inputs = %w[
@@ -220,6 +223,11 @@ create_file "app/views/index/index.html.haml", <<-'CODE'
     - if !current_user
       %p
         = link_to t('Sign up') + " &raquo;".html_safe , new_user_registration_path, class: 'btn btn-primary btn-lg'
+    
+    - flash.each do |name, msg|
+      = content_tag :div, :class => "alert alert-#{name == :error ? "danger" : "success" } alert-dismissable" do
+        %button.close{:type => "button", :data => {:dismiss => "alert"}, :aria => {:hidden => "true"} } &times;
+        = msg
 
 .container
   .row
