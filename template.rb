@@ -216,7 +216,7 @@ end
 CODE
 
 
-create_file "app/views/index.html.haml", <<-'CODE'
+create_file "app/views/index/index.html.haml", <<-'CODE'
 = render partial: 'layouts/header'
 
 .jumbotron
