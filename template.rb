@@ -3,7 +3,7 @@ def source_paths
     [File.dirname(__FILE__) << '/templates']
 end
 
-add_source "https://github.com/rexblack/kicks-app.git"
+add_source "https://github.com/rexblack/kicks-app/raw/master/"
 
 # include gems
 gem "haml"
