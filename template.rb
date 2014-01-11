@@ -80,9 +80,7 @@ CODE
 # remove application layout
 run "rm app/views/layouts/application.html.erb"
 
-
 # layout templates
-
 
 # install devise
 generate "devise:install"
@@ -92,10 +90,7 @@ generate "devise:views"
 # convert devise views to haml
 run "for file in app/views/devise/**/*.erb; do html2haml -e $file ${file%erb}haml && rm $file; done"
 
-
 # views
-
-
 
 # header
 create_file "app/views/layouts/_header.html.haml", <<-'CODE'
@@ -131,8 +126,7 @@ create_file "app/views/layouts/_header.html.haml", <<-'CODE'
               %li
                 %a{:href => edit_user_registration_path} Profile
               %li
-                = link_to "Sign out", destroy_user_session_path, :method => :delete
-                
+                = link_to "Sign out", destroy_user_session_path, :method => :delete            
 CODE
 
 # footer partial
@@ -223,8 +217,9 @@ create_file "app/views/index/index.html.haml", <<-'CODE'
   .container
     %h1= 'Hello world!'
     %p This is a skeleton application with integrated authentication using devise and bootstrap views
-    %p
-      = link_to t('Sign up') + " &raquo;".html_safe , new_user_registration_path, class: 'btn btn-primary btn-lg'
+    - if !current_user
+      %p
+        = link_to t('Sign up') + " &raquo;".html_safe , new_user_registration_path, class: 'btn btn-primary btn-lg'
 
 .container
   .row

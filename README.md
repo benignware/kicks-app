@@ -9,7 +9,6 @@ Rails kickstarter template containing full setup for devise, bootstrap, simple f
 * bootstrap-sass 3.0.3
 * simple_form
 
-
 Usage
 -----
 
