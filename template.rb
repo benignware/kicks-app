@@ -177,7 +177,7 @@ create_file "app/views/layouts/application.html.haml", <<-'CODE'
 CODE
 
 
-create_file "app/views/layouts/_footer.html.haml", <<-'CODE'
+create_file "app/views/layouts/full.html.haml", <<-'CODE'
 !!!
 %html
   %head
