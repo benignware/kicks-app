@@ -114,7 +114,7 @@ create_file "app/views/layouts/_header.html.haml", <<-'CODE'
         %span.icon-bar
         %span.icon-bar
         %span.icon-bar
-      = link_to "Play", root_path, :class => "navbar-brand"
+      = link_to Rails.application.class.parent_name, root_path, :class => "navbar-brand"
     .collapse.navbar-collapse
       %ul.nav.navbar-nav
         %li
