@@ -28,12 +28,12 @@ There you go...
 Example blog application
 ------------------------
 
-Scaffold the post model
+Scaffold the article model
 ```
 rails g scaffold Post title:string content:text
 ```
 
-Add a user column to the post model
+Add a user column to the article model
 ```
 rails g migration AddUserIdToPosts user_id:integer
 ```
@@ -43,9 +43,9 @@ Apply the migrations to the database
 rake db:migrate
 ```
 
-Edit app/controllers/posts_controller.rb to add authorization filters and populate user column with current_user on create action
+Edit app/controllers/articles_controller.rb to add authorization filters and populate user column with current_user on create action
 ```
-class PostsController < ApplicationController
+class ArticlesController < ApplicationController
   
   before_filter :authenticate_user!, only: [:new, :edit, :create, :destroy]
   load_and_authorize_resource
@@ -53,8 +53,8 @@ class PostsController < ApplicationController
   ...
 
   def create
-    @post = Team.new(team_params)
-    @post.user = current_user
+    @article = Article.new(article_params)
+    @article.user = current_user
     ...
   end
 
@@ -74,9 +74,9 @@ class Ability
     
     user ||= User.new # guest user (not logged in)
     if user.nil?
-      can :read, Post
+      can :read, Article
     else
-      can :manage, Post, user_id: user.id
+      can :manage, Article, user_id: user.id
     end
   
   end
@@ -91,9 +91,9 @@ Edit app/views/_header.html.haml to include posts in navigation
 
 %ul.nav.navbar-nav
   %li
-    %a{:href => posts_path} Posts
+    %a{:href => articles_path} Articles
   %li
-    %a{:href => new_post_path} New Post
+    %a{:href => new_article_path} New Article
     
 ...
 ```
