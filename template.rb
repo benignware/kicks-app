@@ -9,6 +9,7 @@ gem "devise"
 gem "simple_form"
 gem 'compass-rails'
 gem 'bootstrap-sass', '~> 3.0.3.0'
+gem 'cancan'
 
 # rename application.css to application.sass
 run "mv app/assets/stylesheets/application.css app/assets/stylesheets/application.sass"
@@ -95,6 +96,12 @@ generate "devise user --skip"
 generate "devise:views"
 # convert devise views to haml
 run "for file in app/views/devise/**/*.erb; do html2haml -e $file ${file%erb}haml && rm $file; done"
+
+
+# install cancan
+generate "cancan:ability"
+
+
 
 # views
 
