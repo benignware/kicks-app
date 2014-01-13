@@ -35,12 +35,22 @@ rails g scaffold Article title:string content:text
 
 Add a user column to the article model
 ```
-rails g migration AddUserIdToPosts user_id:integer
+rails g migration AddUserIdToArticles user_id:integer
 ```
 
 Apply the migrations to the database
 ```
 rake db:migrate
+```
+
+Add belongs_to association to article model
+```
+belongs_to :user
+```
+
+Add has_many association to article model
+```
+has_many :user
 ```
 
 Edit app/controllers/articles_controller.rb to add authorization filters and populate user column with current_user on create action
