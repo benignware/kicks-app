@@ -43,14 +43,19 @@ Apply the migrations to the database
 rake db:migrate
 ```
 
-Add belongs_to association to article model
+Add belongs_to association to app/model/article.rb
 ```
-belongs_to :user
+class Article < ActiveRecord::Base
+  belongs_to :user
+end
 ```
 
-Add has_many association to article model
+Add has_many association to app/model/user.rb
 ```
-has_many :user
+class User < ActiveRecord::Base
+  ...
+  has_many :articles
+end
 ```
 
 Edit app/controllers/articles_controller.rb to add authorization filters and populate user column with current_user on create action
