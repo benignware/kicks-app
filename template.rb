@@ -1,3 +1,6 @@
+# TODO: database.yml.sample
+# TODO: optionally create github-repo - http://developer.github.com/v3/repos/#create
+
 # include gems
 gem "haml"
 gem "haml-rails"
@@ -253,6 +256,10 @@ create_file "app/views/index/index.html.haml", <<-'CODE'
 
 = render partial: 'layouts/footer'
 CODE
+
+git :init
+git add: "."
+git commit: "-a -m 'Initial commit'"
 
 # migrate
 rake "db:migrate"
