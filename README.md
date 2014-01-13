@@ -30,7 +30,7 @@ Example blog application
 
 Scaffold the article model
 ```
-rails g scaffold Post title:string content:text
+rails g scaffold Article title:string content:text
 ```
 
 Add a user column to the article model
