@@ -43,14 +43,14 @@ Apply the migrations to the database
 rake db:migrate
 ```
 
-Add belongs_to association to app/model/article.rb
+Add belongs_to association to app/models/article.rb
 ```
 class Article < ActiveRecord::Base
   belongs_to :user
 end
 ```
 
-Add has_many association to app/model/user.rb
+Add has_many association to app/models/user.rb
 ```
 class User < ActiveRecord::Base
   ...
