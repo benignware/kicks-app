@@ -80,7 +80,7 @@ end
 ```
 
 
-Edit app/models/Ability.rb to authorize users to manage their own posts
+Edit app/models/ability.rb to authorize users to manage their own posts
 ```
 class Ability
   include CanCan::Ability
