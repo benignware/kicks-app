@@ -103,21 +103,21 @@ generate "cancan:ability"
 
 
 # application-controller
-insert_into_file "app/controllers/application_controller.rb", <<-CODE
+insert_into_file "app/controllers/application_controller.rb", after: "class ApplicationController < ActionController::Base" do 
   
   # alert permission denied on root page
   rescue_from CanCan::AccessDenied do |exception|
     redirect_to root_url, :alert => exception.message
   end
   
-  # FIXME: hack to get cancan to work with rails 4
+  # FIXME: patch to get cancan to work with rails 4
   before_filter do
     resource = controller_name.singularize.to_sym
     method = "#{resource}_params"
     params[resource] &&= send(method) if respond_to?(method, true)
   end
-
-CODE, after: "class ApplicationController < ActionController::Base"
+  
+end
 
 # views
 
