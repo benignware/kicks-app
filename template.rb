@@ -121,8 +121,6 @@ insert_into_file "app/controllers/application_controller.rb", after: "class Appl
 CODE
 end
 
-
-
 # views
 
 # header
