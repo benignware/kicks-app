@@ -212,7 +212,7 @@ create_file "app/views/layouts/_header.html.haml", <<-'CODE'
       - else  
         %ul.nav.navbar-nav.navbar-right
           %li.dropdown
-            %a.dropdown-toggle{data: {toggle: 'dropdown'}}
+            %a.dropdown-toggle{href: '#', data: {toggle: 'dropdown'}}
               Account
               %b.caret
             %ul.dropdown-menu
