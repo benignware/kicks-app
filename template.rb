@@ -25,6 +25,11 @@ body
 body > .container
   padding-top: 10px
   padding-bottom: 50px
+  
+.alert, .jumbotron .alert
+  font-size: 14px
+  font-weight: normal
+  line-height: 1em
     
 .form-control
   max-width: 300px
@@ -121,52 +126,8 @@ insert_into_file "app/controllers/application_controller.rb", after: "class Appl
 CODE
 end
 
-# views
+# layouts
 
-# header
-create_file "app/views/layouts/_header.html.haml", <<-'CODE'
-.navbar.navbar-inverse.navbar-fixed-top
-  .container
-    .navbar-header
-      %button.navbar-toggle{:type => "button", :data => {:toggle => "collapse", :target => ".navbar-collapse"} }
-        %span.icon-bar
-        %span.icon-bar
-        %span.icon-bar
-      = link_to Rails.application.class.parent_name, root_path, :class => "navbar-brand"
-    .collapse.navbar-collapse
-      %ul.nav.navbar-nav
-        %li
-          %a{:href => "#"} Link #1
-        %li
-          %a{:href => "#"} Link #2
-        %li
-          %a{:href => "#"} Link #3
-       
-      - if !current_user   
-        = simple_form_for(User.new, as: :user, url: session_path(:user), html: {class: 'navbar-form navbar-right'}) do |f|
-          = f.input :email, required: false, autofocus: true, placeholder: "Email", label: false, input_html: {size: 0}
-          = f.input :password, required: false, placeholder: "Password", label: false, input_html: {size: 0}
-          = f.button :submit, "Sign in", class: 'btn-success'
-      - else  
-        %ul.nav.navbar-nav.navbar-right
-          %li.dropdown
-            %a.dropdown-toggle{data: {toggle: 'dropdown'}}
-              Account
-              %b.caret
-            %ul.dropdown-menu
-              %li
-                %a{:href => edit_user_registration_path} Profile
-              %li
-                = link_to "Sign out", destroy_user_session_path, :method => :delete            
-CODE
-
-# footer partial
-create_file "app/views/layouts/_footer.html.haml", <<-'CODE'
-%footer
-  .container
-    %p
-      &copy; Company 2013
-CODE
 
 # application layout
 create_file "app/views/layouts/application.html.haml", <<-'CODE'
@@ -224,9 +185,53 @@ create_file "app/views/layouts/full.html.haml", <<-'CODE'
     = yield
 CODE
 
+# header
+create_file "app/views/layouts/_header.html.haml", <<-'CODE'
+.navbar.navbar-inverse.navbar-fixed-top
+  .container
+    .navbar-header
+      %button.navbar-toggle{:type => "button", :data => {:toggle => "collapse", :target => ".navbar-collapse"} }
+        %span.icon-bar
+        %span.icon-bar
+        %span.icon-bar
+      = link_to Rails.application.class.parent_name, root_path, :class => "navbar-brand"
+    .collapse.navbar-collapse
+      %ul.nav.navbar-nav
+        %li
+          %a{:href => "#"} Link #1
+        %li
+          %a{:href => "#"} Link #2
+        %li
+          %a{:href => "#"} Link #3
+       
+      - if !current_user   
+        = simple_form_for(User.new, as: :user, url: session_path(:user), html: {class: 'navbar-form navbar-right'}) do |f|
+          = f.input :email, required: false, autofocus: true, placeholder: "Email", label: false, input_html: {size: 0}
+          = f.input :password, required: false, placeholder: "Password", label: false, input_html: {size: 0}
+          = f.button :submit, "Sign in", class: 'btn-success'
+      - else  
+        %ul.nav.navbar-nav.navbar-right
+          %li.dropdown
+            %a.dropdown-toggle{data: {toggle: 'dropdown'}}
+              Account
+              %b.caret
+            %ul.dropdown-menu
+              %li
+                %a{:href => edit_user_registration_path} Profile
+              %li
+                = link_to "Sign out", destroy_user_session_path, :method => :delete            
+CODE
+
+# footer partial
+create_file "app/views/layouts/_footer.html.haml", <<-'CODE'
+%footer
+  .container
+    %p
+      &copy; Company 2014.
+CODE
 
 
-# generate home page
+# generate root page
 
 route "root 'index#index'"  
 
@@ -240,23 +245,24 @@ class IndexController < ApplicationController
 end
 CODE
 
-
 create_file "app/views/index/index.html.haml", <<-'CODE'
 = render partial: 'layouts/header'
 
 .jumbotron
   .container
+  
+    - flash.each do |name, msg|
+      = content_tag :div, :class => "alert alert-#{name == :error ? "danger" : "success" } alert-dismissable" do
+        %button.close{:type => "button", :data => {:dismiss => "alert"}, :aria => {:hidden => "true"} } &times;
+        = msg
+
     %h1= 'Hello world!'
     %p This is a skeleton application with integrated authentication using devise and bootstrap views
     - if !current_user
       %p
         = link_to t('Sign up') + " &raquo;".html_safe , new_user_registration_path, class: 'btn btn-primary btn-lg'
     
-    - flash.each do |name, msg|
-      = content_tag :div, :class => "alert alert-#{name == :error ? "danger" : "success" } alert-dismissable" do
-        %button.close{:type => "button", :data => {:dismiss => "alert"}, :aria => {:hidden => "true"} } &times;
-        = msg
-
+    
 .container
   .row
     .col-md-4
@@ -280,6 +286,37 @@ create_file "app/views/index/index.html.haml", <<-'CODE'
     %hr
 
 = render partial: 'layouts/footer'
+CODE
+
+
+# scaffold templates
+create_file "lib/templates/haml/scaffold/index.html.haml", <<-'CODE'
+%h1 Listing <%= plural_table_name %>
+
+%table.table.table-striped
+  %thead
+    %tr
+<% for attribute in attributes -%>
+      %th <%= attribute.human_name %>
+<% end -%>
+      %th
+      
+  %tbody
+    - @<%= plural_table_name %>.each do |<%= singular_table_name %>|
+      %tr
+<% for attribute in attributes -%>
+        %td= <%= singular_table_name %>.<%= attribute.name %>
+<% end -%>
+        %td
+          .btn-group.pull-right
+            = link_to content_tag('i', nil, class: 'glyphicon glyphicon-search').html_safe, <%= singular_table_name %>, class: 'btn btn-default', class: 'btn btn-default', title: 'Show'
+            = link_to content_tag('i', nil, class: 'glyphicon glyphicon-pencil').html_safe, edit_<%= singular_table_name %>_path(<%= singular_table_name %>), class: 'btn btn-default', title: 'Edit'
+            = link_to content_tag('i', nil, class: 'glyphicon glyphicon-trash').html_safe, <%= singular_table_name %>, :method => :delete, :data => { :confirm => 'Are you sure?' }, class: 'btn btn-default', title: 'Destroy'
+
+%br
+
+= link_to 'New <%= human_name %>', new_<%= singular_table_name %>_path
+
 CODE
 
 git :init

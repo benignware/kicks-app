@@ -80,15 +80,14 @@ end
 ```
 
 
-Edit app/models/ability.rb to authorize users to manage their own posts
+Edit app/models/ability.rb to let everybody read any article and authorize users to manage their own articles
 ```
 class Ability
   include CanCan::Ability
 
   def initialize(user)
-    if user.nil?
-      can :read, Article
-    else
+    can [:index, :show, :create], Article
+    if !user.nil?
       can :manage, Article, user_id: user.id
     end
   end
@@ -97,7 +96,7 @@ end
 ```
 
 
-Edit app/views/_header.html.haml to include posts in navigation
+Edit app/views/_header.html.haml to include articles in navigation
 ```
 ...
 
