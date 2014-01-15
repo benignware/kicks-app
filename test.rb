@@ -1,13 +1,9 @@
 def copy_from_repo(filename, opts = {})
-  repo = 'https://raw.github.com/rexblack/kicksapp/master/files/'
+  repo = 'https://raw.github.com/rexblack/kicks-app/master/files/'
   #repo = 'https://raw.github.com/RailsApps/rails-composer/master/files/'
   source_filename = filename
   destination_filename = filename
-  begin
-    get repo + source_filename, destination_filename
-  rescue OpenURI::HTTPError
-    say_wizard "Unable to obtain #{source_filename} from the repo #{repo}"
-  end
+  get repo + source_filename, destination_filename
 end
 
 
