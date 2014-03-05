@@ -1,0 +1,41 @@
+= render partial: 'layouts/header'
+
+.jumbotron
+  .container
+  
+    - flash.each do |name, msg|
+      = content_tag :div, :class => "alert alert-#{name == :error ? "danger" : "success" } alert-dismissable" do
+        %button.close{:type => "button", :data => {:dismiss => "alert"}, :aria => {:hidden => "true"} } &times;
+        = msg
+
+    %h1= 'Welcome!'
+    %p Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.
+
+    - if !current_user
+      %p
+        = link_to t('Sign up') + " &raquo;".html_safe , new_user_registration_path, class: 'btn btn-primary btn-lg'
+    
+    
+.container
+  .row
+    .col-md-4
+      %h2='Heading'
+      %p
+        Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui.
+      %a.btn.btn-default{href: '#'}
+        View details &raquo;
+    .col-md-4
+      %h2='Heading'
+      %p
+        Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui.
+      %a.btn.btn-default{href: '#'}
+        View details &raquo;
+    .col-md-4
+      %h2='Heading'
+      %p
+        Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui.
+      %a.btn.btn-default{href: '#'}
+        View details &raquo;
+    %hr
+
+= render partial: 'layouts/footer'

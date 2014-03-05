@@ -1,0 +1,30 @@
+body {
+  padding-top: $navbar-height;
+}
+body > .container {
+  padding-top: 10px;
+  padding-bottom: 50px;
+}
+.alert, .jumbotron .alert {
+  font-size: 14px;
+  font-weight: normal;
+  line-height: 1em;
+  .close {
+    line-height: inherit;
+  }
+}
+
+.navbar-inverse .navbar-collapse.in {
+  color: $navbar-inverse-color;
+}
+
+.btn-group.pull-right {
+    white-space: nowrap; // prevent buttons from wrapping when in tight spaces (e.g., the table on the tests page)
+    text-align: right;
+    > .btn {
+        float: none;
+    }
+    > .btn + .btn {
+        margin-left: -5px;
+    }
+}

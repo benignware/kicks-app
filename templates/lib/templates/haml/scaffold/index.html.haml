@@ -1,0 +1,25 @@
+%h1 Listing <%= plural_table_name %>
+
+%table.table
+  %thead
+    %tr
+<% attributes.each_with_index do |attribute, index| -%>
+      %th<% if index > 0 -%>.xs-hidden<% end -%> <%= attribute.human_name %>
+<% end -%>
+      %th
+      
+  %tbody
+    - @<%= plural_table_name %>.each do |<%= singular_table_name %>|
+      %tr
+<% for attribute in attributes -%>
+        %td= <%= singular_table_name %>.<%= attribute.name %>
+<% end -%>
+        %td
+          .btn-group.pull-right
+            = link_to content_tag('i', nil, class: 'glyphicon glyphicon-search').html_safe, <%= singular_table_name %>, class: 'btn btn-default', class: 'btn btn-default btn-sm', title: 'Show'
+            = link_to content_tag('i', nil, class: 'glyphicon glyphicon-pencil').html_safe, edit_<%= singular_table_name %>_path(<%= singular_table_name %>), class: 'btn btn-default btn-sm', title: 'Edit'
+            = link_to content_tag('i', nil, class: 'glyphicon glyphicon-trash').html_safe, <%= singular_table_name %>, :method => :delete, :data => { :confirm => 'Are you sure?' }, class: 'btn btn-default btn-sm', title: 'Destroy'
+
+%br
+= link_to 'New <%= human_name %>', new_<%= singular_table_name %>_path, class: 'btn btn-default'
+

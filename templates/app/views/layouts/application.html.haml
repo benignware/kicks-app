@@ -1,0 +1,13 @@
+!!!
+%html
+  %head
+    = render partial: 'layouts/head'
+  %body
+    
+    = render partial: 'layouts/header'
+    
+    .container
+      = render partial: 'layouts/notice'
+      = yield
+    
+    = render partial: 'layouts/footer'

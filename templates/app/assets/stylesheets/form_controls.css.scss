@@ -1,0 +1,32 @@
+.control-label {
+  display: block;
+}
+
+.form-control, .input-group, .file .thumbnail {
+  max-width: 300px;
+}
+  
+.form-control {
+  &.datetime {
+    width: auto;
+    display: inline-block;
+  }
+}
+    
+.bootstrap-datetimepicker-widget {
+  td, th {
+    text-align: center;
+  }
+  > ul {
+    padding: 0;
+  }
+}
+   
+.datepicker-switch {
+  text-align: center;
+}
+  
+.dropdown-menu form {
+  padding: 3px 20px;
+  min-width: 240px;
+}

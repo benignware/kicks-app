@@ -1,116 +1,22 @@
-# TODO: database.yml.sample
-# TODO: optionally create github-repo - http://developer.github.com/v3/repos/#create
+puts 'kicks-app v0.1'
+puts '--------------'
 
-# include gems
-gem "haml"
-gem "haml-rails"
-gem 'html2haml'
-gem "devise"
-gem "simple_form"
-gem 'compass-rails'
-gem 'bootstrap-sass', '~> 3.0.3.0'
-gem 'cancan'
-
-# rename application.css to application.sass
-run "mv app/assets/stylesheets/application.css app/assets/stylesheets/application.sass"
-
-# install bootstrap
-run "gem install bootstrap-sass"
-create_file "app/assets/stylesheets/_variables.sass"
-prepend_to_file 'app/assets/stylesheets/application.sass', "@import '_variables'\n@import 'bootstrap'\n"
-append_to_file 'app/assets/stylesheets/application.sass', <<-CODE
-body
-  padding-top: $navbar-height
-  
-body > .container
-  padding-top: 10px
-  padding-bottom: 50px
-  
-.alert, .jumbotron .alert
-  font-size: 14px
-  font-weight: normal
-  line-height: 1em
-    
-.form-control
-  max-width: 300px
-CODE
-
-append_to_file 'app/assets/javascripts/application.js', "//= require bootstrap\n"
-
-# simple form
-generate "simple_form:install"
-
-# simple_form bootstrap3 initializer
-initializer 'simple_form_bootstrap3.rb', <<-'CODE'
-inputs = %w[
-  CollectionSelectInput
-  DateTimeInput
-  FileInput
-  GroupedCollectionSelectInput
-  NumericInput
-  PasswordInput
-  RangeInput
-  StringInput
-  TextInput
-]
- 
-inputs.each do |input_type|
-  superclass = "SimpleForm::Inputs::#{input_type}".constantize
-  new_class = Class.new(superclass) do
-    def input_html_classes
-      super.push('form-control')
-    end
-  end
-  Object.const_set(input_type, new_class)
-end
-SimpleForm.setup do |config|
-  
-  config.boolean_style = :nested
-  config.button_class = 'btn btn-default'
-  
-  config.wrappers :bootstrap3, tag: 'div', class: 'form-group', error_class: 'has-error',
-      defaults: { input_html: { class: 'default_class' } } do |b|
-    
-    b.use :html5
-    b.use :min_max
-    b.use :maxlength
-    b.use :placeholder
-    
-    b.optional :pattern
-    b.optional :readonly
-    
-    b.use :label_input
-    b.use :hint,  wrap_with: { tag: 'span', class: 'help-block' }
-    b.use :error, wrap_with: { tag: 'span', class: 'help-block has-error' }
-  end
- 
-  config.default_wrapper = :bootstrap3
+def source_paths
+  Array(super) + 
+    [File.join(File.expand_path(File.dirname(__FILE__)))]
 end
 
-CODE
 
-# remove application layout
-run "rm app/views/layouts/application.html.erb"
+# create templates
+directory 'templates', '.'
+create_file '.bowerrc', '{"directory": "vendor/assets/components"}'
+gsub_file 'bower.json', /"name"\:\s*"app-name"/, "\"name\": \"#{app_name}\"" # replace app-name
 
-# layout templates
+run "rm app/views/layouts/application.html.erb" # remove application.html.erb
 
-# install devise
-generate "devise:install"
-generate "model user --skip"
-generate "devise user --skip"
-generate "devise:views"
-# convert devise views to haml
-run "for file in app/views/devise/**/*.erb; do html2haml -e $file ${file%erb}haml && rm $file; done"
-
-
-# install cancan
-generate "cancan:ability"
-
-
-# application-controller
+#application controller patch
 insert_into_file "app/controllers/application_controller.rb", after: "class ApplicationController < ActionController::Base" do 
 <<-'CODE'
-
 
   # alert permission denied on root page
   rescue_from CanCan::AccessDenied do |exception|
@@ -126,202 +32,81 @@ insert_into_file "app/controllers/application_controller.rb", after: "class Appl
 CODE
 end
 
-# layouts
-
-
-# application layout
-create_file "app/views/layouts/application.html.haml", <<-'CODE'
-!!!
-%html
-  %head
-    %meta{:charset => "utf-8"}
-    %title Starter Template for Bootstrap
-    %meta{:content => "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no", :name => "viewport"}
-    %meta{:content => "", :name => "description"}
-    %meta{:content => "", :name => "author"}
-
-    / Le HTML5 shim, for IE6-8 support of HTML5 elements
-    /[if lt IE 9]
-      = javascript_include_tag "https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js", "https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"
-
-    = stylesheet_link_tag    "application", :media => "all", "data-turbolinks-track" => true
-    = javascript_include_tag "application", "data-turbolinks-track" => true
-    = csrf_meta_tags
-  %body
-    
-    = render partial: 'layouts/header'
-           
-    .container
-      - flash.each do |name, msg|
-        = content_tag :div, :class => "alert alert-#{name == :error ? "danger" : "success" } alert-dismissable" do
-          %button.close{:type => "button", :data => {:dismiss => "alert"}, :aria => {:hidden => "true"} } &times;
-          = msg
-      = yield
-      
-    
-    = render partial: 'layouts/footer'
+insert_into_file "app/assets/javascripts/application.js", before: "//= require_tree ." do 
+<<-'CODE'
+//= require modernizr/modernizr
+//= require bootstrap/dist/js/bootstrap.min
+//= require moment/min/moment.min
+//= require eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min
+//= require jquery-filepicker/src/js/jquery.filepicker
 CODE
-
-
-create_file "app/views/layouts/full.html.haml", <<-'CODE'
-!!!
-%html
-  %head
-    %meta{:charset => "utf-8"}
-    %title Starter Template for Bootstrap
-    %meta{:content => "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no", :name => "viewport"}
-    %meta{:content => "", :name => "description"}
-    %meta{:content => "", :name => "author"}
-
-    / Le HTML5 shim, for IE6-8 support of HTML5 elements
-    /[if lt IE 9]
-      = javascript_include_tag "https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js", "https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"
-
-    = stylesheet_link_tag    "application", :media => "all", "data-turbolinks-track" => true
-    = javascript_include_tag "application", "data-turbolinks-track" => true
-    = csrf_meta_tags
-  %body
-    
-    = yield
-CODE
-
-# header
-create_file "app/views/layouts/_header.html.haml", <<-'CODE'
-.navbar.navbar-inverse.navbar-fixed-top
-  .container
-    .navbar-header
-      %button.navbar-toggle{:type => "button", :data => {:toggle => "collapse", :target => ".navbar-collapse"} }
-        %span.icon-bar
-        %span.icon-bar
-        %span.icon-bar
-      = link_to Rails.application.class.parent_name, root_path, :class => "navbar-brand"
-    .collapse.navbar-collapse
-      %ul.nav.navbar-nav
-        %li
-          %a{:href => "#"} Link #1
-        %li
-          %a{:href => "#"} Link #2
-        %li
-          %a{:href => "#"} Link #3
-       
-      - if !current_user   
-        = simple_form_for(User.new, as: :user, url: session_path(:user), html: {class: 'navbar-form navbar-right'}) do |f|
-          = f.input :email, required: false, autofocus: true, placeholder: "Email", label: false, input_html: {size: 0}
-          = f.input :password, required: false, placeholder: "Password", label: false, input_html: {size: 0}
-          = f.button :submit, "Sign in", class: 'btn-success'
-      - else  
-        %ul.nav.navbar-nav.navbar-right
-          %li.dropdown
-            %a.dropdown-toggle{href: '#', data: {toggle: 'dropdown'}}
-              Account
-              %b.caret
-            %ul.dropdown-menu
-              %li
-                %a{:href => edit_user_registration_path} Profile
-              %li
-                = link_to "Sign out", destroy_user_session_path, :method => :delete            
-CODE
-
-# footer partial
-create_file "app/views/layouts/_footer.html.haml", <<-'CODE'
-%footer
-  .container
-    %p
-      &copy; Company 2014.
-CODE
-
-
-# generate root page
-
-route "root 'index#index'"  
-
-
-# index controller
-create_file "app/controllers/index_controller.rb", <<-'CODE'
-class IndexController < ApplicationController
-  def index
-    render view: 'index', layout: 'full'
-  end
 end
+
+gsub_file 'app/assets/stylesheets/application.css', /\s*\*=\s*require_tree\s*\./, "" # delete require_tree 
+append_to_file 'app/assets/stylesheets/application.css', <<-CODE
+@import "_variables";
+@import "bootstrap";
+@import "eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min";
+@import "form_controls";
+@import "layouts";
 CODE
+run "mv app/assets/stylesheets/application.css app/assets/stylesheets/application.scss" # rename application.css to application.scss
 
-create_file "app/views/index/index.html.haml", <<-'CODE'
-= render partial: 'layouts/header'
+# gem dependencies
+gem "haml"
+gem "haml-rails"
+gem 'html2haml'
+gem 'compass-rails'
+gem "simple_form"
+gem 'simple-navigation'
+gem "devise"
+gem 'cancan'
+gem 'bootstrap-sass'
 
-.jumbotron
-  .container
+gem 'scaffold_assoc', github: 'rexblack/scaffold_assoc'
+
+run  'bundle install'
+
+# install and configure gems
+generate "simple_form:install" # simple_form
+generate "devise:install" # simple_form
+
+
+# models
+# generate "model User"
+# generate "migration add_first_name_to_users first_name:string -skip"
+# generate "devise User -skip"
+
+generate "model User --skip"
+#generate "migration AddFirstNameToUsers first_name:string --skip"
+generate "devise User --skip"
+gsub_file 'config/initializers/devise.rb', /#\s*config\.scoped_views\s*=\s*false/, "config.scoped_views = true" # delete require_tree 
   
-    - flash.each do |name, msg|
-      = content_tag :div, :class => "alert alert-#{name == :error ? "danger" : "success" } alert-dismissable" do
-        %button.close{:type => "button", :data => {:dismiss => "alert"}, :aria => {:hidden => "true"} } &times;
-        = msg
-
-    %h1= 'Hello world!'
-    %p This is a skeleton application with integrated authentication using devise and bootstrap views
-    - if !current_user
-      %p
-        = link_to t('Sign up') + " &raquo;".html_safe , new_user_registration_path, class: 'btn btn-primary btn-lg'
-    
-    
-.container
-  .row
-    .col-md-4
-      %h2='Heading'
-      %p
-        Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui.
-      %a.btn.btn-default{href: '#'}
-        View details &raquo;
-    .col-md-4
-      %h2='Heading'
-      %p
-        Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui.
-      %a.btn.btn-default{href: '#'}
-        View details &raquo;
-    .col-md-4
-      %h2='Heading'
-      %p
-        Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui.
-      %a.btn.btn-default{href: '#'}
-        View details &raquo;
-    %hr
-
-= render partial: 'layouts/footer'
-CODE
-
-
-# scaffold templates
-create_file "lib/templates/haml/scaffold/index.html.haml", <<-'CODE'
-%h1 Listing <%= plural_table_name %>
-
-%table.table.table-striped
-  %thead
-    %tr
-<% for attribute in attributes -%>
-      %th <%= attribute.human_name %>
-<% end -%>
-      %th
-      
-  %tbody
-    - @<%= plural_table_name %>.each do |<%= singular_table_name %>|
-      %tr
-<% for attribute in attributes -%>
-        %td= <%= singular_table_name %>.<%= attribute.name %>
-<% end -%>
-        %td
-          .btn-group.pull-right
-            = link_to content_tag('i', nil, class: 'glyphicon glyphicon-search').html_safe, <%= singular_table_name %>, class: 'btn btn-default', class: 'btn btn-default', title: 'Show'
-            = link_to content_tag('i', nil, class: 'glyphicon glyphicon-pencil').html_safe, edit_<%= singular_table_name %>_path(<%= singular_table_name %>), class: 'btn btn-default', title: 'Edit'
-            = link_to content_tag('i', nil, class: 'glyphicon glyphicon-trash').html_safe, <%= singular_table_name %>, :method => :delete, :data => { :confirm => 'Are you sure?' }, class: 'btn btn-default', title: 'Destroy'
-
-%br
-
-= link_to 'New <%= human_name %>', new_<%= singular_table_name %>_path
-
-CODE
-
-git :init
-git add: "."
-git commit: "-a -m 'Initial commit'"
+  
+generate "cancan:ability"
 
 # migrate
 rake "db:migrate"
+
+# routes
+route "root 'index#index'"
+
+# helpers
+insert_into_file "app/helpers/application_helper.rb", after: "module ApplicationHelper\n" do 
+<<-'CODE'
+  def title(page_title, options={})
+    content_for(:title, page_title.to_s)
+    return content_tag(:h1, page_title, options)
+  end
+CODE
+end
+
+# views
+generate "devise:views users"
+run "for file in app/views/users/**/*.erb; do html2haml -e $file ${file%erb}haml && rm $file; done" # convert devise views to haml
+
+# client-side dependencies
+
+# init bower
+run "bower install"
+
