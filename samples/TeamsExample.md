@@ -73,7 +73,6 @@ class Team < ActiveRecord::Base
 end
   
 ```
-
 # app/models/ability.rb
 class Ability
   include CanCan::Ability
@@ -82,6 +81,9 @@ class Ability
     can [:index, :show], Team
     if !user.nil?
       can :create, Team
+      can :rsvp, Team do |team|  
+        team.is_member?(user)  
+      end 
       can :manage, Team do |team|  
         team.is_attending?(user)  
       end  
