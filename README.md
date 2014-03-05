@@ -9,12 +9,16 @@ Rails kickstarter template containing full setup for devise, bootstrap, simple f
 * bootstrap-sass 3.0.3
 * simple_form
 
+Prerequisites
+-------------
+In order to run bower you need to install node.js first
+
 Usage
 -----
 
 Create a new app from the command line
 ```
-rails new Project -m 'https://raw.github.com/rexblack/kicks-app/master/template.rb'
+rails new Project -m 'kicks-app/template.rb'
 ```
 
 Move to the new application directory and start server
