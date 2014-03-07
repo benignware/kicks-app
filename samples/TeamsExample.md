@@ -5,8 +5,7 @@ TeamsExample
 # Gemfile
 gem "mail"
 gem "devise_invitable"
-# TODO: gem attendable
-#gem "attendable"
+gem 'attendable', github: 'rexblack/attendable'
 ```
 
 ```
@@ -66,11 +65,11 @@ rake db:migrate
 ```
 # app/models/team.rb
 class Team < ActiveRecord::Base
-  include Attendable
-  is_attendable by: :users, as: :team_members
+  acts_as_attendable by: :users, as: :team_members
   has_attached_file :image, :styles => { :medium => "640x", :thumb => "100x100>" }, :default_url => "/images/:style/missing.png"
   validates_attachment_content_type :image, :content_type => /\Aimage\/.*\Z/
 end
+
   
 ```
 # app/models/ability.rb
@@ -90,6 +89,7 @@ class Ability
     end
   end
 end
+
 
 ```
 # app/controllers/teams_controller.rb
@@ -131,12 +131,10 @@ class TeamsController < ApplicationController
       if team_member.save
         redirect_to @team, notice: 'status was successfully updated.'
       else
-        #TODO: ajax error message
         redirect_to @team, notice: 'status could not be saved.'
       end
     else
       # user was not invited
-      #TODO: ajax error message
       redirect_to @team, notice: 'You are not invited to the team.'
     end
     
@@ -168,12 +166,8 @@ end
 
 
 
-
-
 ```
 -# app/views/teams/show.html.haml
-
-
 .row
   - @team.attendees.each do |user|
     .profile.col-md-2.col-sm-3.col-xs-6
