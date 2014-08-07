@@ -62,6 +62,7 @@ gem 'simple-navigation'
 gem "devise"
 gem 'cancan'
 gem 'bootstrap-sass'
+gem 'kaminari'
 
 gem 'scaffold_assoc', github: 'rexblack/scaffold_assoc'
 

@@ -19,7 +19,8 @@
             = link_to content_tag('i', nil, class: 'glyphicon glyphicon-search').html_safe, <%= singular_table_name %>, class: 'btn btn-default', class: 'btn btn-default btn-sm', title: 'Show'
             = link_to content_tag('i', nil, class: 'glyphicon glyphicon-pencil').html_safe, edit_<%= singular_table_name %>_path(<%= singular_table_name %>), class: 'btn btn-default btn-sm', title: 'Edit'
             = link_to content_tag('i', nil, class: 'glyphicon glyphicon-trash').html_safe, <%= singular_table_name %>, :method => :delete, :data => { :confirm => 'Are you sure?' }, class: 'btn btn-default btn-sm', title: 'Destroy'
-
-%br
-= link_to 'New <%= human_name %>', new_<%= singular_table_name %>_path, class: 'btn btn-default'
+= paginate @<%= plural_table_name %>
+.actions
+  .btn-group
+    = link_to 'New <%= human_name %>', new_<%= singular_table_name %>_path, class: 'btn btn-default'
 

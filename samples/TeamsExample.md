@@ -4,19 +4,22 @@ TeamsExample
 ```
 # Gemfile
 gem "mail"
+gem "paperclip"
 gem "devise_invitable"
-gem 'attendable', github: 'rexblack/attendable'
+gem 'acts_as_attendable', github: 'rexblack/acts_as_attendable'
 ```
 
 ```
+bundle install
 rails g devise_invitable:install
 rails g devise_invitable User
 rails g attendable:install
-rake db:migrate
-```
-
-```
+rails g scaffold Team name:string
+rails g paperclip team image
+rails g navigation_item Team
 rails g devise_invitable:views users
+rake db:migrate
+
 ```
 
 
@@ -42,6 +45,9 @@ rails g devise_invitable:views users
   }
 ```
 
+
+
+
 ```
 # config/routes.rb
 resources :teams do
@@ -50,15 +56,6 @@ resources :teams do
     get 'rsvp'
   end
 end
-```
-
-
-```
-rails g scaffold Team name:string
-rails g navigation_item Team
-rails g paperclip team image
-rake db:migrate
-
 ```
 
 
@@ -97,7 +94,7 @@ class TeamsController < ApplicationController
 
   before_action :set_team, only: [:show, :edit, :update, :destroy, :invite, :rsvp]
   
-  before_filter :authenticate_user!, only: [:new, :edit, :create, :destroy]
+  before_filter :authenticate_user!, only: [:new, :edit, :create, :destroy, :invite, :rsvp]
   load_and_authorize_resource
   
   def create
@@ -129,9 +126,9 @@ class TeamsController < ApplicationController
     if team_member
       team_member.status = params[:status]
       if team_member.save
-        redirect_to @team, notice: 'status was successfully updated.'
+        redirect_to @team, notice: 'Status was successfully updated.'
       else
-        redirect_to @team, notice: 'status could not be saved.'
+        redirect_to @team, notice: 'Status could not be saved.'
       end
     else
       # user was not invited
@@ -168,12 +165,12 @@ end
 
 ```
 -# app/views/teams/show.html.haml
-.row
-  - @team.attendees.each do |user|
-    .profile.col-md-2.col-sm-3.col-xs-6
-      .thumbnail
-        = image_tag(user.avatar.url(:medium))
-        %h5= user.first_name + " " + user.last_name
+    ...
+    %tr.row
+      %td.col-sm-1='Attendees'
+      %td
+        - @team.attendees.each do |user|
+          %p= "User #" + user.id.to_s 
         
         
 .actions

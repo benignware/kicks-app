@@ -21,6 +21,7 @@ SimpleForm.setup do |config|
   
   config.boolean_style = :nested
   config.button_class = 'btn btn-default'
+  config.error_notification_class = 'alert alert-danger'
   
   config.wrappers :bootstrap3, tag: 'div', class: 'form-group', error_class: 'has-error',
       defaults: { input_html: { class: 'default_class' } } do |b|
