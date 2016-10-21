@@ -1,5 +1,4 @@
-kicks-app
-=========
+# kicks-app-rails
 
 Rails kickstarter template containing full setup for devise, bootstrap, simple form and other gems
 
